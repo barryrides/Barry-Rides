@@ -609,13 +609,12 @@
             localStorage.setItem('barry_rides_orders', JSON.stringify(orders));
             localStorage.setItem('barry_rides_clients', JSON.stringify(directoryClients));
             localStorage.setItem('barry_rides_drivers', JSON.stringify(directoryDrivers));
-            autoSyncToCloud();
         }
 
-        function autoSyncToCloud() {
+        function sendSingleOrderToCloud(order) {
             const payload = {
-                action: "syncAll",
-                orders: orders
+                action: "addOrder",
+                order: order
             };
 
             fetch(CLOUD_URL, {
@@ -623,13 +622,13 @@
                 mode: "no-cors",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify(payload)
-            }).catch(err => console.log("Error de sincronización automática:", err));
+            }).catch(err => console.log("Error enviando pedido a la nube:", err));
         }
 
         function syncWithCloud() {
             const btnIcon = document.getElementById('cloudIcon');
             btnIcon.classList.add('fa-spin');
-            showToast('Sincronizando', 'Enviando datos actualizados a Google Sheets...');
+            showToast('Sincronizando', 'Enviando listado completo a Google Sheets...');
 
             const payload = {
                 action: "syncAll",
@@ -916,7 +915,9 @@
                     orders[idx].netAmount = net;
                     orders[idx].notes = notes;
                 }
-                showToast('Servicio Actualizado', 'Los cambios se guardaron y sincronizaron.');
+                saveToStorage();
+                syncWithCloud();
+                showToast('Servicio Actualizado', 'Cambios guardados y sincronizados.');
             } else {
                 const newOrder = {
                     id: 'BR-' + Math.floor(1000 + Math.random() * 9000),
@@ -935,10 +936,11 @@
                     createdAt: currentModalTimestamp || formatDateTime(new Date())
                 };
                 orders.unshift(newOrder);
-                showToast('Servicio Publicado', 'Guardado localmente y enviado a Google Sheets.');
+                saveToStorage();
+                sendSingleOrderToCloud(newOrder);
+                showToast('Servicio Publicado', 'Añadido abajo en la hoja y sincronizado.');
             }
 
-            saveToStorage();
             renderApp();
             closeModal('serviceModal');
         }
@@ -991,6 +993,7 @@
                 order.driverPhone = driverPhone;
                 order.status = 'En Curso';
                 saveToStorage();
+                syncWithCloud();
                 renderApp();
                 closeModal('assignModal');
                 showToast('Conductor Asignado', `Asignado a ${driverName} y sincronizado.`);
@@ -1006,6 +1009,7 @@
             order.status = states[(currentIndex + 1) % states.length];
             
             saveToStorage();
+            syncWithCloud();
             renderApp();
         }
 
@@ -1034,6 +1038,7 @@
             if (confirm('¿Estás seguro de eliminar este servicio?')) {
                 orders = orders.filter(o => o.id !== orderId);
                 saveToStorage();
+                syncWithCloud();
                 renderApp();
                 showToast('Servicio Eliminado', 'El registro ha sido borrado y sincronizado.');
             }
@@ -1293,6 +1298,7 @@
                 directoryClients = defaultClients;
                 directoryDrivers = defaultDrivers;
                 saveToStorage();
+                syncWithCloud();
                 renderApp();
                 showToast('Datos Restaurados', 'Se cargaron los registros de prueba.');
             }
