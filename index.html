@@ -47,12 +47,12 @@
                 </div>
             </div>
 
-            <div class="space-y-4">
+            <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-1.5">Usuario</label>
                     <div class="relative">
                         <i class="fa-solid fa-user absolute left-3.5 top-3.5 text-slate-500 text-sm"></i>
-                        <input type="text" id="loginUser" placeholder="Ej. Admin Boss" 
+                        <input type="text" id="loginUser" placeholder="Ej. Admin Boss" autocomplete="username"
                             class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-green-500">
                     </div>
                 </div>
@@ -61,7 +61,7 @@
                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-1.5">Contraseña</label>
                     <div class="relative">
                         <i class="fa-solid fa-key absolute left-3.5 top-3.5 text-slate-500 text-sm"></i>
-                        <input type="password" id="loginPass" placeholder="••••••••••••" 
+                        <input type="password" id="loginPass" placeholder="••••••••••••" autocomplete="current-password"
                             class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-green-500">
                     </div>
                 </div>
@@ -70,10 +70,10 @@
                     Usuario o contraseña incorrectos.
                 </div>
 
-                <button type="button" onclick="handleLogin()" class="w-full bg-green-600 hover:bg-green-500 text-white py-3 rounded-xl font-bold shadow-lg shadow-green-600/30 transition-all cursor-pointer">
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-500 text-white py-3 rounded-xl font-bold shadow-lg shadow-green-600/30 transition-all cursor-pointer">
                     Iniciar Sesión
                 </button>
-            </div>
+            </form>
         </div>
     </div>
 
@@ -507,17 +507,23 @@
     <script>
         const CLOUD_URL = "https://script.google.com/macros/s/AKfycbyLnVPlqwuhiBOacfiMEZdyEk-MmKF2Ul29Crz5cAPUMqkvR_F1YrJoz2ry1g50rbfU/exec";
 
-        function handleLogin() {
+        function enterDashboard() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('mainAppWrapper').classList.remove('hidden');
+            renderApp();
+            fetchFromCloud(false);
+        }
+
+        function handleLogin(event) {
+            if (event) event.preventDefault();
             const user = document.getElementById('loginUser').value.trim();
             const pass = document.getElementById('loginPass').value.trim();
             const errorDiv = document.getElementById('loginError');
 
             if (user === "Admin Boss" && pass === "SilencioquellegoelBooss") {
                 localStorage.setItem('barry_rides_logged', 'true');
-                document.getElementById('loginScreen').classList.add('hidden');
-                document.getElementById('mainAppWrapper').classList.remove('hidden');
-                renderApp();
-                fetchFromCloud(false);
+                errorDiv.classList.add('hidden');
+                enterDashboard();
             } else {
                 errorDiv.classList.remove('hidden');
             }
@@ -533,14 +539,10 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            const isLogged = localStorage.getItem('barry_rides_logged');
-            if (isLogged === 'true') {
-                document.getElementById('loginScreen').classList.add('hidden');
-                document.getElementById('mainAppWrapper').classList.remove('hidden');
-                renderApp();
-                fetchFromCloud(false);
+            if (localStorage.getItem('barry_rides_logged') === 'true') {
+                enterDashboard();
             }
-            // Sincronización automática cada 15 segundos
+
             setInterval(() => {
                 if (localStorage.getItem('barry_rides_logged') === 'true') {
                     fetchFromCloud(false);
@@ -584,41 +586,36 @@
             localStorage.setItem('barry_rides_drivers', JSON.stringify(directoryDrivers));
         }
 
-        // Descargar datos desde Google Sheets
         function fetchFromCloud(showAlert) {
-    const fetchIcon = document.getElementById('cloudFetchIcon');
-    const statusText = document.getElementById('syncStatusText');
-    if (fetchIcon) fetchIcon.classList.add('fa-spin');
-    if (statusText) statusText.textContent = "Descargando cambios...";
+            const fetchIcon = document.getElementById('cloudFetchIcon');
+            const statusText = document.getElementById('syncStatusText');
+            if (fetchIcon) fetchIcon.classList.add('fa-spin');
+            if (statusText) statusText.textContent = "Descargando cambios de la nube...";
 
-    fetch(CLOUD_URL, {
-        method: "GET",
-        redirect: "follow"
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (Array.isArray(data)) {
-            orders = data;
-            saveToStorage();
-            renderApp();
-            if (statusText) statusText.textContent = "Sincronizado: " + new Date().toLocaleTimeString();
-            if (showAlert) showToast('Datos Actualizados', 'Registros sincronizados con la nube.');
-        }
-    })
-    .catch(err => {
-        console.log("Error al conectar:", err);
-        if (statusText) statusText.textContent = "Sin conexión con la nube (usando caché local)";
-    })
-    .finally(() => {
-        if (fetchIcon) fetchIcon.classList.remove('fa-spin');
-    });
-}        .catch(err => {
-                    console.log("Error al descargar de la nube:", err);
-                    if (statusText) statusText.textContent = "Sin conexión con la nube (usando caché local)";
-                })
-                .finally(() => {
-                    if (fetchIcon) fetchIcon.classList.remove('fa-spin');
-                });
+            fetch(CLOUD_URL, {
+                method: "GET",
+                redirect: "follow"
+            })
+            .then(res => {
+                if (!res.ok) throw new Error("Respuesta HTTP " + res.status);
+                return res.json();
+            })
+            .then(data => {
+                if (Array.isArray(data)) {
+                    orders = data;
+                    saveToStorage();
+                    renderApp();
+                    if (statusText) statusText.textContent = "Sincronizado: " + new Date().toLocaleTimeString();
+                    if (showAlert) showToast('Datos Actualizados', 'Se cargaron los registros más recientes.');
+                }
+            })
+            .catch(err => {
+                console.log("Error al descargar de la nube:", err);
+                if (statusText) statusText.textContent = "Sin conexión con la nube (usando caché local)";
+            })
+            .finally(() => {
+                if (fetchIcon) fetchIcon.classList.remove('fa-spin');
+            });
         }
 
         function sendSingleOrderToCloud(order) {
