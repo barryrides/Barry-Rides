@@ -586,23 +586,33 @@
 
         // Descargar datos desde Google Sheets
         function fetchFromCloud(showAlert) {
-            const fetchIcon = document.getElementById('cloudFetchIcon');
-            const statusText = document.getElementById('syncStatusText');
-            if (fetchIcon) fetchIcon.classList.add('fa-spin');
-            if (statusText) statusText.textContent = "Descargando cambios de la nube...";
+    const fetchIcon = document.getElementById('cloudFetchIcon');
+    const statusText = document.getElementById('syncStatusText');
+    if (fetchIcon) fetchIcon.classList.add('fa-spin');
+    if (statusText) statusText.textContent = "Descargando cambios...";
 
-            fetch(CLOUD_URL)
-                .then(res => res.json())
-                .then(data => {
-                    if (Array.isArray(data)) {
-                        orders = data;
-                        saveToStorage();
-                        renderApp();
-                        if (statusText) statusText.textContent = "Sincronizado: " + new Date().toLocaleTimeString();
-                        if (showAlert) showToast('Datos Actualizados', 'Se cargaron los registros más recientes.');
-                    }
-                })
-                .catch(err => {
+    fetch(CLOUD_URL, {
+        method: "GET",
+        redirect: "follow"
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (Array.isArray(data)) {
+            orders = data;
+            saveToStorage();
+            renderApp();
+            if (statusText) statusText.textContent = "Sincronizado: " + new Date().toLocaleTimeString();
+            if (showAlert) showToast('Datos Actualizados', 'Registros sincronizados con la nube.');
+        }
+    })
+    .catch(err => {
+        console.log("Error al conectar:", err);
+        if (statusText) statusText.textContent = "Sin conexión con la nube (usando caché local)";
+    })
+    .finally(() => {
+        if (fetchIcon) fetchIcon.classList.remove('fa-spin');
+    });
+}        .catch(err => {
                     console.log("Error al descargar de la nube:", err);
                     if (statusText) statusText.textContent = "Sin conexión con la nube (usando caché local)";
                 })
