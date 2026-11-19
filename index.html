@@ -503,9 +503,10 @@
         </div>
     </div>
 
-    <!-- JavaScript Application Logic with Two-Way Cloud Sync -->
+    <!-- JavaScript Application Logic with Stabilized Two-Way Cloud Sync -->
     <script>
         const CLOUD_URL = "https://script.google.com/macros/s/AKfycbyLnVPlqwuhiBOacfiMEZdyEk-MmKF2Ul29Crz5cAPUMqkvR_F1YrJoz2ry1g50rbfU/exec";
+        let isSyncingToCloud = false;
 
         function enterDashboard() {
             document.getElementById('loginScreen').classList.add('hidden');
@@ -543,11 +544,12 @@
                 enterDashboard();
             }
 
+            // Sincronización automática cada 60 segundos para no pisar registros recién creados
             setInterval(() => {
-                if (localStorage.getItem('barry_rides_logged') === 'true') {
+                if (localStorage.getItem('barry_rides_logged') === 'true' && !isSyncingToCloud) {
                     fetchFromCloud(false);
                 }
-            }, 15000);
+            }, 60000);
         });
 
         function formatDateTime(dateObj) {
@@ -587,6 +589,8 @@
         }
 
         function fetchFromCloud(showAlert) {
+            if (isSyncingToCloud && !showAlert) return;
+
             const fetchIcon = document.getElementById('cloudFetchIcon');
             const statusText = document.getElementById('syncStatusText');
             if (fetchIcon) fetchIcon.classList.add('fa-spin');
@@ -602,9 +606,12 @@
             })
             .then(data => {
                 if (Array.isArray(data)) {
-                    orders = data;
-                    saveToStorage();
-                    renderApp();
+                    // Solo sobrescribe si hay datos en la nube o si la lista local está vacía
+                    if (data.length > 0 || orders.length === 0) {
+                        orders = data;
+                        saveToStorage();
+                        renderApp();
+                    }
                     if (statusText) statusText.textContent = "Sincronizado: " + new Date().toLocaleTimeString();
                     if (showAlert) showToast('Datos Actualizados', 'Se cargaron los registros más recientes.');
                 }
@@ -619,6 +626,7 @@
         }
 
         function sendSingleOrderToCloud(order) {
+            isSyncingToCloud = true;
             const payload = {
                 action: "addOrder",
                 order: order
@@ -630,11 +638,18 @@
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify(payload)
             }).then(() => {
-                setTimeout(() => fetchFromCloud(false), 1500);
-            }).catch(err => console.log("Error enviando pedido a la nube:", err));
+                setTimeout(() => {
+                    isSyncingToCloud = false;
+                    fetchFromCloud(false);
+                }, 4000);
+            }).catch(err => {
+                isSyncingToCloud = false;
+                console.log("Error enviando pedido a la nube:", err);
+            });
         }
 
         function syncWithCloud() {
+            isSyncingToCloud = true;
             const btnIcon = document.getElementById('cloudIcon');
             btnIcon.classList.add('fa-spin');
             showToast('Sincronizando', 'Enviando listado completo a Google Sheets...');
@@ -652,10 +667,12 @@
             }).then(() => {
                 setTimeout(() => {
                     btnIcon.classList.remove('fa-spin');
+                    isSyncingToCloud = false;
                     showToast('¡Nube Actualizada!', 'Todos los servicios se sincronizaron con éxito.');
-                }, 1000);
+                }, 2500);
             }).catch(err => {
                 btnIcon.classList.remove('fa-spin');
+                isSyncingToCloud = false;
                 alert('Error al conectar con la nube: ' + err);
             });
         }
