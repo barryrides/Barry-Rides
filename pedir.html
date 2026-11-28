@@ -56,21 +56,43 @@
         <input type="text" id="regName" required placeholder="Ej. Ana Gómez / Empresa XYZ"
           class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
       </div>
-      <div>
-        <label class="block text-xs font-semibold text-slate-400 mb-1">Número Telefónico *</label>
-        <input type="tel" id="regPhone" required placeholder="Ej. 04120000000"
-          class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Cédula o RIF *</label>
+          <input type="text" id="regIdDoc" required placeholder="Ej. V-12345678 o J-12345678-9"
+            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm uppercase focus:outline-none focus:border-blue-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Número Telefónico *</label>
+          <input type="tel" id="regPhone" required placeholder="Ej. 04120000000"
+            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
+        </div>
       </div>
+
       <div>
         <label class="block text-xs font-semibold text-slate-400 mb-1">Usuario o Correo *</label>
         <input type="text" id="regUser" required placeholder="Ej. anagomez o correo@empresa.com"
           class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
       </div>
+
       <div>
         <label class="block text-xs font-semibold text-slate-400 mb-1">Contraseña *</label>
         <input type="password" id="regPass" required minlength="4" placeholder="Tu contraseña"
           class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
       </div>
+
+      <div class="flex items-start gap-2.5 bg-slate-950/70 border border-slate-800 rounded-xl p-3">
+        <input type="checkbox" id="regTerms" required class="mt-0.5 accent-orange-500 cursor-pointer" />
+        <label for="regTerms" class="text-xs text-slate-300 leading-snug cursor-pointer">
+          Acepto los
+          <button type="button" onclick="openTermsModal()" class="text-orange-400 underline hover:text-orange-300 font-semibold">
+            Términos y Condiciones
+          </button>
+          de Barry Rides.
+        </label>
+      </div>
+
       <button type="submit" id="btnRegister"
         class="w-full bg-orange-500 hover:bg-orange-400 text-white font-bold py-3 rounded-xl shadow-lg shadow-orange-500/25 transition cursor-pointer">
         Registrarme y Entrar
@@ -80,91 +102,285 @@
     <div id="authError" class="hidden bg-red-500/10 border border-red-500/30 rounded-xl p-3 text-xs text-red-300 text-center"></div>
   </div>
 
-  <!-- PANTALLA DE PEDIDO -->
-  <div id="orderSection" class="hidden w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5">
+  <!-- MODAL DE TÉRMINOS Y CONDICIONES -->
+  <div id="termsModal" class="hidden fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-50">
+    <div class="w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-base font-bold text-white">Términos y Condiciones — Barry Rides</h3>
+        <button type="button" onclick="closeTermsModal()" class="text-xs text-slate-400 hover:text-white cursor-pointer">Cerrar</button>
+      </div>
+      <div id="termsBody" class="max-h-80 overflow-y-auto text-xs text-slate-300 space-y-3 leading-relaxed pr-2">
+        <div class="space-y-1">
+          <p class="font-bold text-white text-sm">TÉRMINOS Y CONDICIONES DE USO Y SERVICIO — BARRY RIDES</p>
+          <p class="text-slate-400">Última actualización: Noviembre de 2026<br>Ámbito de aplicación: República Bolivariana de Venezuela</p>
+        </div>
+
+        <div class="space-y-1">
+          <p class="font-bold text-white">1. Aceptación de los Términos</p>
+          <p>Al solicitar, contratar o utilizar cualquiera de los servicios de BARRY RIDES (en adelante, "LA EMPRESA"), ya sea a través de nuestros canales de atención, mensajería directa, plataformas web o formularios de despacho, el USUARIO o REMITENTE (en adelante, "EL CLIENTE") acepta de manera plena y sin reservas los presentes Términos y Condiciones.</p>
+        </div>
+
+        <div class="space-y-1">
+          <p class="font-bold text-white">2. Servicios Ofrecidos</p>
+          <p>BARRY RIDES presta servicios de movilidad y logística urbana/interurbana dentro del territorio de la República Bolivariana de Venezuela, principalmente mediante flota motorizada y/o unidades asignadas, abarcando las siguientes modalidades:</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li><strong>Traslados:</strong> Servicio de movilidad y transporte de pasajeros desde un punto de origen a un punto de destino acordado previamente.</li>
+            <li><strong>Delivery:</strong> Retiro y entrega rápida de alimentos, compras, pedidos o productos adquiridos en comercios, restaurantes o establecimientos afiliados/indicados por EL CLIENTE.</li>
+            <li><strong>Encomiendas:</strong> Recepción, traslado y entrega de paquetes, documentos, sobres o bultos entre un remitente y un destinatario designado.</li>
+          </ul>
+        </div>
+
+        <div class="space-y-1">
+          <p class="font-bold text-white">3. Condiciones Operativas por Servicio</p>
+          <p class="font-semibold text-slate-200">3.1. Traslados</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li>EL CLIENTE debe encontrarse disponible en el punto de recogida a la hora coordinada y proporcionar una dirección clara y segura.</li>
+            <li>Los conductores/operadores se reservan el derecho de rechazar o finalizar el traslado si el pasajero presenta conductas agresivas, estado de embriaguez o intoxicación que comprometa la seguridad vial, o si intenta transportar objetos peligrosos o ilícitos.</li>
+            <li>El uso de casco y demás elementos de seguridad exigidos por la normativa de tránsito vigente es obligatorio cuando aplique.</li>
+          </ul>
+          <p class="font-semibold text-slate-200 pt-1">3.2. Delivery</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li>EL CLIENTE es responsable de verificar las características, disponibilidad y condiciones del pedido con el comercio o proveedor correspondiente, salvo que se haya pactado expresamente una gestión de compra específica.</li>
+            <li>BARRY RIDES no se responsabiliza por el sabor, temperatura, estado interno o calidad de manufactura de alimentos o productos sellados de fábrica, siempre que el transporte se haya realizado con diligencia razonable y dentro de los parámetros operativos habituales.</li>
+          </ul>
+          <p class="font-semibold text-slate-200 pt-1">3.3. Encomiendas</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li>Todo envío debe estar debidamente embalado, cerrado y rotulado con los datos completos del remitente y del destinatario (nombre, teléfono, dirección exacta y referencias).</li>
+            <li>EL CLIENTE acepta expresamente la Declaración Jurada de Contenido y Descargo de Responsabilidad contenida en la Sección 7 de este documento.</li>
+          </ul>
+        </div>
+
+        <div class="space-y-1">
+          <p class="font-bold text-white">4. Tarifas, Facturación y Pagos</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li>Las tarifas se calculan y comunican antes o al momento de confirmar la orden de servicio, según distancia, modalidad, tiempo de espera, complejidad o acuerdos especiales.</li>
+            <li><strong>Modalidades de pago:</strong> BARRY RIDES admite los medios de pago habilitados y acordados con EL CLIENTE (incluyendo, según corresponda, transferencias, Pago Móvil, efectivo u otras modalidades vigentes, así como cuentas corporativas o convenios previamente pactados).</li>
+            <li>En servicios con crédito, corte o convenios/cuentas corporativas, EL CLIENTE se obliga a cumplir con los plazos y condiciones de facturación y pago acordados. El retraso en los pagos podrá suspender nuevas asignaciones hasta regularizar el saldo.</li>
+          </ul>
+        </div>
+
+        <div class="space-y-1">
+          <p class="font-bold text-white">5. Tiempos de Espera, Cancelaciones y Reprogramaciones</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li>Los tiempos estimados de llegada y entrega son referenciales y pueden variar por condiciones de tráfico, clima, fallas eléctricas o de conectividad, bloqueos o situaciones de fuerza mayor.</li>
+            <li>Tiempos de espera prolongados en el punto de origen o destino, así como cancelaciones realizadas una vez que la unidad ya se ha desplazado o asignado, podrán generar cargos adicionales o de cancelación previamente informados.</li>
+            <li>En caso de que el destinatario de una encomienda o delivery no se encuentre o rechace la recepción sin justificación válida, se coordinará un retorno o reintento bajo las condiciones tarifarias aplicables.</li>
+          </ul>
+        </div>
+
+        <div class="space-y-1">
+          <p class="font-bold text-white">6. Limitación General de Responsabilidad</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li>BARRY RIDES actúa con diligencia en la coordinación y ejecución logística de los servicios solicitados, pero no será responsable por retrasos, interrupciones o daños derivados de caso fortuito o fuerza mayor (incluyendo fallas de servicios públicos, condiciones climáticas adversas, congestión vial o actuaciones de terceros ajenos a la operación).</li>
+            <li>En envíos de encomiendas o delivery, cualquier observación visible sobre el estado externo del paquete o derrames evidentes deberá reportarse al momento de la entrega.</li>
+          </ul>
+        </div>
+
+        <div class="space-y-1">
+          <p class="font-bold text-white">7. DECLARACIÓN JURADA DE CONTENIDO Y DESCARGO DE RESPONSABILIDAD</p>
+          <p>El REMITENTE declara bajo fe de juramento que el paquete o encomienda entregado a BARRY RIDES contiene única y exclusivamente los artículos lícitos descritos en la presente guía/orden de servicio, los cuales son de su legítima propiedad o tenencia y cumplen con la legislación vigente de la República Bolivariana de Venezuela.</p>
+          <p>Queda estrictamente prohibido el envío de sustancias estupefacientes o psicotrópicas, armas, municiones, explosivos, dinero en efectivo, mercancía de contrabando, bienes provenientes de delitos, materiales peligrosos o cualquier otro artículo de tenencia o circulación ilícita.</p>
+          <p>BARRY RIDES y sus conductores/repartidores actúan únicamente como intermediarios logísticos de buena fe y no tienen la obligación ni la facultad de violar la privacidad de los paquetes cerrados, salvo sospecha fundada o requerimiento de autoridad competente. En consecuencia, el REMITENTE asume la total y exclusiva responsabilidad civil, administrativa y penal por el contenido del envío, eximiendo expresamente a BARRY RIDES, a sus directivos y a los conductores afiliados o empleados de cualquier sanción, multa, retención de vehículos o proceso judicial derivado de la falsedad, omisión o incumplimiento de esta declaración. El REMITENTE se obliga a indemnizar y mantener indemne a la empresa por cualquier daño, perjuicio o gasto legal ocasionado por dicho incumplimiento.</p>
+        </div>
+
+        <div class="space-y-1">
+          <p class="font-bold text-white">8. Datos de Contacto y Atención</p>
+          <p>Para consultas, reportes de servicio, gestión de cuentas o reclamaciones relacionadas con una orden específica, EL CLIENTE puede comunicarse a través de los canales oficiales de atención de BARRY RIDES, indicando el código o referencia de la orden de servicio.</p>
+        </div>
+
+        <div class="space-y-1">
+          <p class="font-bold text-white">9. Modificaciones y Ley Aplicable</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li>BARRY RIDES podrá actualizar estos Términos y Condiciones en cualquier momento para adaptarlos a cambios operativos o legales; la versión vigente regirá para los servicios solicitados a partir de su publicación o comunicación.</li>
+            <li>Estos Términos y Condiciones se rigen por las leyes de la República Bolivariana de Venezuela.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pt-2 flex justify-end">
+        <button type="button" onclick="acceptAndCloseTerms()"
+          class="bg-orange-500 hover:bg-orange-400 text-white text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer">
+          Entendido y Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTALLA DE PEDIDO Y SEGUIMIENTO -->
+  <div id="portalSection" class="hidden w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
     <div class="flex items-center justify-between border-b border-slate-800 pb-4">
       <div class="flex items-center gap-3">
         <div class="w-12 h-12 bg-white rounded-xl p-1.5 flex items-center justify-center overflow-hidden">
           <img src="logo-barry-rides.png" alt="Barry Rides" class="w-full h-full object-contain">
         </div>
         <div>
-          <h2 class="text-lg font-bold text-white">Pedir Servicio</h2>
+          <h2 class="text-lg font-bold text-white">Portal de Clientes</h2>
           <p class="text-xs text-slate-400" id="welcomeLabel">Cliente</p>
         </div>
       </div>
-      <button type="button" onclick="logoutClient()"
-        class="text-xs text-slate-400 hover:text-red-400 border border-slate-800 hover:border-red-500/40 px-3 py-1.5 rounded-lg transition cursor-pointer">
-        Cerrar sesión
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="refreshClientOrders()"
+          class="text-xs text-blue-300 hover:text-white border border-blue-500/30 hover:bg-blue-600/20 px-3 py-1.5 rounded-lg transition cursor-pointer">
+          Actualizar
+        </button>
+        <button type="button" onclick="logoutClient()"
+          class="text-xs text-slate-400 hover:text-red-400 border border-slate-800 hover:border-red-500/40 px-3 py-1.5 rounded-lg transition cursor-pointer">
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 bg-slate-950 p-1 rounded-xl border border-slate-800">
+      <button type="button" id="navOrder" onclick="switchPortalView('order')"
+        class="py-2 text-xs font-bold rounded-lg bg-blue-600 text-white transition cursor-pointer">
+        Pedir Servicio
+      </button>
+      <button type="button" id="navHistory" onclick="switchPortalView('history')"
+        class="py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition cursor-pointer">
+        Mis Solicitudes (<span id="completedCountBadge">0</span>)
       </button>
     </div>
 
-    <form id="clientOrderForm" class="space-y-4">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-950/70 p-3.5 rounded-2xl border border-slate-800/80">
-        <div>
-          <label class="block text-[11px] uppercase tracking-wider font-semibold text-slate-500 mb-1">Nombre</label>
-          <input type="text" id="cName" readonly
-            class="w-full bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-300 cursor-not-allowed" />
+    <div id="viewOrder" class="space-y-6">
+      <form id="clientOrderForm" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-950/70 p-3.5 rounded-2xl border border-slate-800/80">
+          <div>
+            <label class="block text-[11px] uppercase tracking-wider font-semibold text-slate-500 mb-1">Nombre</label>
+            <input type="text" id="cName" readonly
+              class="w-full bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-300 cursor-not-allowed" />
+          </div>
+          <div>
+            <label class="block text-[11px] uppercase tracking-wider font-semibold text-slate-500 mb-1">Número Telefónico</label>
+            <input type="tel" id="cPhone" readonly
+              class="w-full bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-300 cursor-not-allowed" />
+          </div>
+          <div>
+            <label class="block text-[11px] uppercase tracking-wider font-semibold text-slate-500 mb-1">Cédula / RIF</label>
+            <input type="text" id="cIdDoc" readonly
+              class="w-full bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-300 cursor-not-allowed" />
+          </div>
         </div>
-        <div>
-          <label class="block text-[11px] uppercase tracking-wider font-semibold text-slate-500 mb-1">Número Telefónico</label>
-          <input type="tel" id="cPhone" readonly
-            class="w-full bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-300 cursor-not-allowed" />
-        </div>
-      </div>
 
-      <div>
-        <label class="block text-xs font-semibold text-slate-300 mb-1">Tipo de Servicio *</label>
-        <select id="cType" required
-          class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500">
-          <option value="Traslados">Traslados</option>
-          <option value="Delivery">Delivery</option>
-          <option value="Encomiendas">Encomiendas</option>
-        </select>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Ubicación *</label>
-          <input type="text" id="cOrigin" required placeholder="¿Dónde te buscamos / recogemos?"
-            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Destino *</label>
-          <input type="text" id="cDestination" required placeholder="¿Hacia dónde va?"
-            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Modalidad de Pago *</label>
-          <select id="cPayment" onchange="handlePaymentChange()" required
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Tipo de Servicio *</label>
+          <select id="cType" onchange="handleServiceTypeChange()" required
             class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500">
-            <option value="Corporativo">Corporativo</option>
-            <option value="Convenio">Convenio</option>
-            <option value="Pago Móvil">Pago Móvil</option>
+            <option value="Traslados">Traslados</option>
+            <option value="Delivery">Delivery</option>
+            <option value="Encomiendas">Encomiendas</option>
           </select>
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Referencia</label>
-          <input type="text" id="cReference" value="N/A" readonly
-            class="w-full bg-slate-900/80 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-400 cursor-not-allowed" />
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Ubicación *</label>
+            <input type="text" id="cOrigin" required placeholder="¿Dónde te buscamos / recogemos?"
+              class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Destino *</label>
+            <input type="text" id="cDestination" required placeholder="¿Hacia dónde va?"
+              class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
+          </div>
+        </div>
+
+        <div id="deliveryFields" class="hidden bg-slate-950/60 border border-slate-800 rounded-2xl p-4 space-y-3">
+          <p class="text-xs font-bold text-blue-400 uppercase tracking-wider">Datos de Recepción (Delivery)</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Nombre de quien recibe *</label>
+              <input type="text" id="delReceiverName" placeholder="Nombre completo"
+                class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Teléfono de quien recibe *</label>
+              <input type="tel" id="delReceiverPhone" placeholder="Ej. 04140000000"
+                class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
+            </div>
+          </div>
+        </div>
+
+        <div id="parcelFields" class="hidden bg-slate-950/60 border border-slate-800 rounded-2xl p-4 space-y-3.5">
+          <p class="text-xs font-bold text-orange-400 uppercase tracking-wider">Detalles de Encomienda</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">1. Nombre de quien entrega *</label>
+              <input type="text" id="parSenderName" placeholder="Quien entrega el paquete"
+                class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Teléfono de quien entrega *</label>
+              <input type="tel" id="parSenderPhone" placeholder="Ej. 04120000000"
+                class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">2. ¿Qué se está enviando? *</label>
+            <input type="text" id="parItemDesc" placeholder="Ej. Documentos, repuesto, caja pequeña..."
+              class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">3. Nombre de quien recibe *</label>
+            <input type="text" id="parReceiverName" placeholder="Nombre de quien recibe la encomienda"
+              class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
+          </div>
+          <p class="text-[11px] text-slate-400 leading-relaxed border-t border-slate-800/80 pt-2.5">
+            * Declaración de contenido: Al solicitar este envío declaro bajo mi responsabilidad que el paquete no contiene sustancias, objetos o materiales prohibidos o ilegales de acuerdo con las regulaciones vigentes en Venezuela.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Modalidad de Pago *</label>
+            <select id="cPayment" onchange="handlePaymentChange()" required
+              class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500">
+              <option value="Corporativo">Corporativo</option>
+              <option value="Convenio">Convenio</option>
+              <option value="Pago Móvil">Pago Móvil</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Referencia</label>
+            <input type="text" id="cReference" value="N/A" readonly
+              class="w-full bg-slate-900/80 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-400 cursor-not-allowed" />
+          </div>
+        </div>
+
+        <button type="submit" id="btnSubmitOrder"
+          class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/25 transition cursor-pointer mt-2">
+          Enviar Solicitud
+        </button>
+      </form>
+
+      <div id="orderConfirmation" class="hidden bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 text-sm text-emerald-300"></div>
+
+      <div class="border-t border-slate-800 pt-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-white">Solicitudes Activas</h3>
+          <span class="text-[11px] text-slate-400">Se mueven a "Mis Solicitudes" al completarse</span>
+        </div>
+        <div id="activeOrdersList" class="space-y-2.5">
+          <p class="text-xs text-slate-500">Cargando solicitudes...</p>
         </div>
       </div>
+    </div>
 
-      <button type="submit" id="btnSubmitOrder"
-        class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/25 transition cursor-pointer mt-2">
-        Enviar Solicitud
-      </button>
-    </form>
-
-    <div id="orderConfirmation" class="hidden bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 text-sm text-emerald-300"></div>
+    <div id="viewHistory" class="hidden space-y-3">
+      <div class="flex items-center justify-between">
+        <h3 class="text-sm font-bold text-white">Mis Solicitudes Completadas</h3>
+        <span class="text-xs text-slate-400">Historial de servicios finalizados</span>
+      </div>
+      <div id="completedOrdersList" class="space-y-2.5">
+        <p class="text-xs text-slate-500">No hay solicitudes completadas aún.</p>
+      </div>
+    </div>
   </div>
 
   <script>
     const CLOUD_URL = "https://script.google.com/macros/s/AKfycbxJJME1yKmZMPaaFjd3i7Aq8BkPp4qRtXlAs71Tjd-Arw1jTYkdYavIowa2AXRkum_i/exec";
     const STORAGE_KEY = "barry_rides_client_session";
+    let currentClient = null;
 
     window.addEventListener("DOMContentLoaded", () => {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -178,8 +394,22 @@
           localStorage.removeItem(STORAGE_KEY);
         }
       }
+      handleServiceTypeChange();
       handlePaymentChange();
     });
+
+    function openTermsModal() {
+      document.getElementById("termsModal").classList.remove("hidden");
+    }
+
+    function closeTermsModal() {
+      document.getElementById("termsModal").classList.add("hidden");
+    }
+
+    function acceptAndCloseTerms() {
+      document.getElementById("regTerms").checked = true;
+      closeTermsModal();
+    }
 
     function switchAuthTab(tab) {
       const loginForm = document.getElementById("loginForm");
@@ -201,6 +431,26 @@
       }
     }
 
+    function switchPortalView(view) {
+      const viewOrder = document.getElementById("viewOrder");
+      const viewHistory = document.getElementById("viewHistory");
+      const navOrder = document.getElementById("navOrder");
+      const navHistory = document.getElementById("navHistory");
+
+      if (view === "order") {
+        viewOrder.classList.remove("hidden");
+        viewHistory.classList.add("hidden");
+        navOrder.className = "py-2 text-xs font-bold rounded-lg bg-blue-600 text-white transition cursor-pointer";
+        navHistory.className = "py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition cursor-pointer";
+      } else {
+        viewOrder.classList.add("hidden");
+        viewHistory.classList.remove("hidden");
+        navHistory.className = "py-2 text-xs font-bold rounded-lg bg-emerald-600 text-white transition cursor-pointer";
+        navOrder.className = "py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition cursor-pointer";
+      }
+      refreshClientOrders();
+    }
+
     function showAuthError(msg) {
       const errBox = document.getElementById("authError");
       errBox.textContent = msg;
@@ -208,18 +458,56 @@
     }
 
     function showOrderPortal(client) {
+      currentClient = client;
       document.getElementById("authSection").classList.add("hidden");
-      document.getElementById("orderSection").classList.remove("hidden");
+      document.getElementById("portalSection").classList.remove("hidden");
       document.getElementById("welcomeLabel").textContent = "Hola, " + client.name;
       document.getElementById("cName").value = client.name;
       document.getElementById("cPhone").value = client.phone;
+      document.getElementById("cIdDoc").value = client.idDocument || "No registrado";
+      refreshClientOrders();
     }
 
     function logoutClient() {
       localStorage.removeItem(STORAGE_KEY);
-      document.getElementById("orderSection").classList.add("hidden");
+      currentClient = null;
+      document.getElementById("portalSection").classList.add("hidden");
       document.getElementById("authSection").classList.remove("hidden");
       document.getElementById("orderConfirmation").classList.add("hidden");
+    }
+
+    function handleServiceTypeChange() {
+      const type = document.getElementById("cType").value;
+      const delBox = document.getElementById("deliveryFields");
+      const parBox = document.getElementById("parcelFields");
+
+      const delInputs = [
+        document.getElementById("delReceiverName"),
+        document.getElementById("delReceiverPhone")
+      ];
+      const parInputs = [
+        document.getElementById("parSenderName"),
+        document.getElementById("parSenderPhone"),
+        document.getElementById("parItemDesc"),
+        document.getElementById("parReceiverName")
+      ];
+
+      if (type === "Delivery") {
+        delBox.classList.remove("hidden");
+        parBox.classList.add("hidden");
+        delInputs.forEach(el => el.required = true);
+        parInputs.forEach(el => { el.required = false; el.value = ""; });
+      } else if (type === "Encomiendas") {
+        parBox.classList.remove("hidden");
+        delBox.classList.add("hidden");
+        parInputs.forEach(el => el.required = true);
+        delInputs.forEach(el => { el.required = false; el.value = ""; });
+      } else {
+        delBox.classList.add("hidden");
+        parBox.classList.add("hidden");
+        delInputs.forEach(el => { el.required = false; el.value = ""; });
+        parInputs.forEach(el => { el.required = false; el.value = ""; });
+      }
     }
 
     function handlePaymentChange() {
@@ -241,6 +529,65 @@
       }
     }
 
+    function renderOrderCard(order, isCompleted) {
+      const badgeColor = isCompleted
+        ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+        : "bg-amber-500/15 text-amber-300 border-amber-500/30";
+
+      return `
+        <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5 space-y-1.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-bold text-white">${order.id} · ${order.serviceType}</span>
+            <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${badgeColor}">${order.status || "Disponible"}</span>
+          </div>
+          <p class="text-xs text-slate-300"><strong>Origen:</strong> ${order.origin} → <strong>Destino:</strong> ${order.destination}</p>
+          <p class="text-[11px] text-slate-400">Pago: ${order.paymentType} (Ref: ${order.paymentReference || "N/A"})${order.createdAt ? " · " + order.createdAt : ""}</p>
+        </div>
+      `;
+    }
+
+    async function refreshClientOrders() {
+      if (!currentClient) return;
+      const activeContainer = document.getElementById("activeOrdersList");
+      const completedContainer = document.getElementById("completedOrdersList");
+      const badgeCount = document.getElementById("completedCountBadge");
+
+      try {
+        const res = await fetch(CLOUD_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "getClientOrders",
+            client: {
+              name: currentClient.name,
+              phone: currentClient.phone
+            }
+          })
+        });
+        const data = await res.json();
+        const orders = Array.isArray(data.orders) ? data.orders : [];
+
+        const activeOrders = orders.filter(o => String(o.status || "").trim().toLowerCase() !== "completado");
+        const completedOrders = orders.filter(o => String(o.status || "").trim().toLowerCase() === "completado");
+
+        badgeCount.textContent = completedOrders.length;
+
+        if (activeOrders.length === 0) {
+          activeContainer.innerHTML = `<p class="text-xs text-slate-500">No tienes solicitudes activas en este momento.</p>`;
+        } else {
+          activeContainer.innerHTML = activeOrders.map(o => renderOrderCard(o, false)).join("");
+        }
+
+        if (completedOrders.length === 0) {
+          completedContainer.innerHTML = `<p class="text-xs text-slate-500">Aún no tienes solicitudes completadas.</p>`;
+        } else {
+          completedContainer.innerHTML = completedOrders.map(o => renderOrderCard(o, true)).join("");
+        }
+      } catch (err) {
+        activeContainer.innerHTML = `<p class="text-xs text-red-400">No se pudieron cargar tus solicitudes.</p>`;
+      }
+    }
+
     document.getElementById("registerForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const btn = document.getElementById("btnRegister");
@@ -252,9 +599,11 @@
         action: "registerClient",
         client: {
           name: document.getElementById("regName").value.trim(),
+          idDocument: document.getElementById("regIdDoc").value.trim().toUpperCase(),
           phone: document.getElementById("regPhone").value.trim(),
           username: document.getElementById("regUser").value.trim(),
-          password: document.getElementById("regPass").value.trim()
+          password: document.getElementById("regPass").value.trim(),
+          acceptedTerms: document.getElementById("regTerms").checked
         }
       };
 
@@ -327,18 +676,33 @@
       btn.textContent = "Enviando...";
       box.classList.add("hidden");
 
+      const serviceType = document.getElementById("cType").value;
       const paymentType = document.getElementById("cPayment").value;
       const paymentReference = paymentType === "Pago Móvil"
         ? document.getElementById("cReference").value.trim()
         : "N/A";
 
+      let extraSummary = "";
+      if (serviceType === "Delivery") {
+        const recName = document.getElementById("delReceiverName").value.trim();
+        const recPhone = document.getElementById("delReceiverPhone").value.trim();
+        extraSummary = ` | Recibe: ${recName} (${recPhone})`;
+      } else if (serviceType === "Encomiendas") {
+        const senName = document.getElementById("parSenderName").value.trim();
+        const senPhone = document.getElementById("parSenderPhone").value.trim();
+        const itemDesc = document.getElementById("parItemDesc").value.trim();
+        const recName = document.getElementById("parReceiverName").value.trim();
+        extraSummary = ` | Entrega: ${senName} (${senPhone}) | Envía: ${itemDesc} | Recibe: ${recName} | Declara legalidad VE`;
+      }
+
+      const idDocVal = document.getElementById("cIdDoc").value.trim();
       const orderId = "BR-" + Date.now().toString().slice(-6);
       const order = {
         id: orderId,
         createdAt: new Date().toISOString(),
         clientName: document.getElementById("cName").value.trim(),
         clientPhone: document.getElementById("cPhone").value.trim(),
-        serviceType: document.getElementById("cType").value,
+        serviceType: serviceType,
         origin: document.getElementById("cOrigin").value.trim(),
         destination: document.getElementById("cDestination").value.trim(),
         netAmount: 0,
@@ -347,7 +711,7 @@
         status: "Disponible",
         driverName: "",
         driverPhone: "",
-        notes: "Portal Clientes | Pago: " + paymentType + " | Ref: " + paymentReference
+        notes: `ID/RIF: ${idDocVal} | Pago: ${paymentType} | Ref: ${paymentReference}${extraSummary}`
       };
 
       try {
@@ -360,10 +724,12 @@
         document.getElementById("cOrigin").value = "";
         document.getElementById("cDestination").value = "";
         document.getElementById("cPayment").value = "Corporativo";
+        handleServiceTypeChange();
         handlePaymentChange();
 
         box.innerHTML = `<strong>¡Solicitud enviada!</strong> Código <strong>${orderId}</strong>. Ya está en cola para asignación por un operador.`;
         box.classList.remove("hidden");
+        refreshClientOrders();
       } catch (err) {
         alert("No se pudo enviar la solicitud: " + err.message);
       } finally {
