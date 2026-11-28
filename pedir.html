@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pedir Servicio - Barry Rides</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4">
+
+  <!-- PANTALLA DE ACCESO / REGISTRO -->
+  <div id="authSection" class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-7 shadow-2xl space-y-6">
+    <div class="text-center space-y-3">
+      <div class="w-24 h-24 bg-white border border-slate-800 rounded-2xl mx-auto flex items-center justify-center shadow-lg p-2 overflow-hidden">
+        <img src="logo-barry-rides.png" alt="Barry Rides Logo" class="w-full h-full object-contain">
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-white">Barry Rides</h1>
+        <p class="text-xs text-slate-400">Solicita tu traslado, delivery o encomienda</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 bg-slate-950 p-1 rounded-xl border border-slate-800">
+      <button type="button" id="tabLogin" onclick="switchAuthTab('login')"
+        class="py-2 text-xs font-bold rounded-lg bg-blue-600 text-white transition cursor-pointer">
+        Iniciar Sesión
+      </button>
+      <button type="button" id="tabRegister" onclick="switchAuthTab('register')"
+        class="py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition cursor-pointer">
+        Registrarse
+      </button>
+    </div>
+
+    <!-- Login -->
+    <form id="loginForm" class="space-y-4">
+      <div>
+        <label class="block text-xs font-semibold text-slate-400 mb-1">Usuario o Correo</label>
+        <input type="text" id="loginUser" required placeholder="Ej. usuario@correo.com"
+          class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-400 mb-1">Contraseña</label>
+        <input type="password" id="loginPass" required placeholder="••••••••"
+          class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
+      </div>
+      <button type="submit" id="btnLogin"
+        class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-600/25 transition cursor-pointer">
+        Ingresar
+      </button>
+    </form>
+
+    <!-- Registro -->
+    <form id="registerForm" class="space-y-3.5 hidden">
+      <div>
+        <label class="block text-xs font-semibold text-slate-400 mb-1">Nombre o Empresa *</label>
+        <input type="text" id="regName" required placeholder="Ej. Ana Gómez / Empresa XYZ"
+          class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-400 mb-1">Número Telefónico *</label>
+        <input type="tel" id="regPhone" required placeholder="Ej. 04120000000"
+          class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-400 mb-1">Usuario o Correo *</label>
+        <input type="text" id="regUser" required placeholder="Ej. anagomez o correo@empresa.com"
+          class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-400 mb-1">Contraseña *</label>
+        <input type="password" id="regPass" required minlength="4" placeholder="Tu contraseña"
+          class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
+      </div>
+      <button type="submit" id="btnRegister"
+        class="w-full bg-orange-500 hover:bg-orange-400 text-white font-bold py-3 rounded-xl shadow-lg shadow-orange-500/25 transition cursor-pointer">
+        Registrarme y Entrar
+      </button>
+    </form>
+
+    <div id="authError" class="hidden bg-red-500/10 border border-red-500/30 rounded-xl p-3 text-xs text-red-300 text-center"></div>
+  </div>
+
+  <!-- PANTALLA DE PEDIDO -->
+  <div id="orderSection" class="hidden w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5">
+    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-white rounded-xl p-1.5 flex items-center justify-center overflow-hidden">
+          <img src="logo-barry-rides.png" alt="Barry Rides" class="w-full h-full object-contain">
+        </div>
+        <div>
+          <h2 class="text-lg font-bold text-white">Pedir Servicio</h2>
+          <p class="text-xs text-slate-400" id="welcomeLabel">Cliente</p>
+        </div>
+      </div>
+      <button type="button" onclick="logoutClient()"
+        class="text-xs text-slate-400 hover:text-red-400 border border-slate-800 hover:border-red-500/40 px-3 py-1.5 rounded-lg transition cursor-pointer">
+        Cerrar sesión
+      </button>
+    </div>
+
+    <form id="clientOrderForm" class="space-y-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-950/70 p-3.5 rounded-2xl border border-slate-800/80">
+        <div>
+          <label class="block text-[11px] uppercase tracking-wider font-semibold text-slate-500 mb-1">Nombre</label>
+          <input type="text" id="cName" readonly
+            class="w-full bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-300 cursor-not-allowed" />
+        </div>
+        <div>
+          <label class="block text-[11px] uppercase tracking-wider font-semibold text-slate-500 mb-1">Número Telefónico</label>
+          <input type="tel" id="cPhone" readonly
+            class="w-full bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-300 cursor-not-allowed" />
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-slate-300 mb-1">Tipo de Servicio *</label>
+        <select id="cType" required
+          class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500">
+          <option value="Traslados">Traslados</option>
+          <option value="Delivery">Delivery</option>
+          <option value="Encomiendas">Encomiendas</option>
+        </select>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Ubicación *</label>
+          <input type="text" id="cOrigin" required placeholder="¿Dónde te buscamos / recogemos?"
+            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Destino *</label>
+          <input type="text" id="cDestination" required placeholder="¿Hacia dónde va?"
+            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Modalidad de Pago *</label>
+          <select id="cPayment" onchange="handlePaymentChange()" required
+            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500">
+            <option value="Corporativo">Corporativo</option>
+            <option value="Convenio">Convenio</option>
+            <option value="Pago Móvil">Pago Móvil</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Referencia</label>
+          <input type="text" id="cReference" value="N/A" readonly
+            class="w-full bg-slate-900/80 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-400 cursor-not-allowed" />
+        </div>
+      </div>
+
+      <button type="submit" id="btnSubmitOrder"
+        class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/25 transition cursor-pointer mt-2">
+        Enviar Solicitud
+      </button>
+    </form>
+
+    <div id="orderConfirmation" class="hidden bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 text-sm text-emerald-300"></div>
+  </div>
+
+  <script>
+    const CLOUD_URL = "https://script.google.com/macros/s/AKfycbxJJME1yKmZMPaaFjd3i7Aq8BkPp4qRtXlAs71Tjd-Arw1jTYkdYavIowa2AXRkum_i/exec";
+    const STORAGE_KEY = "barry_rides_client_session";
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          const client = JSON.parse(saved);
+          if (client && client.name && client.phone) {
+            showOrderPortal(client);
+          }
+        } catch (e) {
+          localStorage.removeItem(STORAGE_KEY);
+        }
+      }
+      handlePaymentChange();
+    });
+
+    function switchAuthTab(tab) {
+      const loginForm = document.getElementById("loginForm");
+      const registerForm = document.getElementById("registerForm");
+      const tabLogin = document.getElementById("tabLogin");
+      const tabRegister = document.getElementById("tabRegister");
+      document.getElementById("authError").classList.add("hidden");
+
+      if (tab === "login") {
+        loginForm.classList.remove("hidden");
+        registerForm.classList.add("hidden");
+        tabLogin.className = "py-2 text-xs font-bold rounded-lg bg-blue-600 text-white transition cursor-pointer";
+        tabRegister.className = "py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition cursor-pointer";
+      } else {
+        loginForm.classList.add("hidden");
+        registerForm.classList.remove("hidden");
+        tabRegister.className = "py-2 text-xs font-bold rounded-lg bg-orange-500 text-white transition cursor-pointer";
+        tabLogin.className = "py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition cursor-pointer";
+      }
+    }
+
+    function showAuthError(msg) {
+      const errBox = document.getElementById("authError");
+      errBox.textContent = msg;
+      errBox.classList.remove("hidden");
+    }
+
+    function showOrderPortal(client) {
+      document.getElementById("authSection").classList.add("hidden");
+      document.getElementById("orderSection").classList.remove("hidden");
+      document.getElementById("welcomeLabel").textContent = "Hola, " + client.name;
+      document.getElementById("cName").value = client.name;
+      document.getElementById("cPhone").value = client.phone;
+    }
+
+    function logoutClient() {
+      localStorage.removeItem(STORAGE_KEY);
+      document.getElementById("orderSection").classList.add("hidden");
+      document.getElementById("authSection").classList.remove("hidden");
+      document.getElementById("orderConfirmation").classList.add("hidden");
+    }
+
+    function handlePaymentChange() {
+      const paymentType = document.getElementById("cPayment").value;
+      const refInput = document.getElementById("cReference");
+
+      if (paymentType === "Pago Móvil") {
+        refInput.readOnly = false;
+        refInput.required = true;
+        refInput.value = "";
+        refInput.placeholder = "N° de referencia *";
+        refInput.className = "w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500";
+      } else {
+        refInput.readOnly = true;
+        refInput.required = false;
+        refInput.value = "N/A";
+        refInput.placeholder = "";
+        refInput.className = "w-full bg-slate-900/80 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-400 cursor-not-allowed";
+      }
+    }
+
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("btnRegister");
+      btn.disabled = true;
+      btn.textContent = "Registrando...";
+      document.getElementById("authError").classList.add("hidden");
+
+      const payload = {
+        action: "registerClient",
+        client: {
+          name: document.getElementById("regName").value.trim(),
+          phone: document.getElementById("regPhone").value.trim(),
+          username: document.getElementById("regUser").value.trim(),
+          password: document.getElementById("regPass").value.trim()
+        }
+      };
+
+      try {
+        const res = await fetch(CLOUD_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.status === "success") {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data.client));
+          showOrderPortal(data.client);
+          e.target.reset();
+        } else {
+          showAuthError(data.message || "No se pudo completar el registro.");
+        }
+      } catch (err) {
+        showAuthError("Error de conexión: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Registrarme y Entrar";
+      }
+    });
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("btnLogin");
+      btn.disabled = true;
+      btn.textContent = "Verificando...";
+      document.getElementById("authError").classList.add("hidden");
+
+      const payload = {
+        action: "loginClient",
+        credentials: {
+          username: document.getElementById("loginUser").value.trim(),
+          password: document.getElementById("loginPass").value.trim()
+        }
+      };
+
+      try {
+        const res = await fetch(CLOUD_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.status === "success") {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data.client));
+          showOrderPortal(data.client);
+          e.target.reset();
+        } else {
+          showAuthError(data.message || "Credenciales inválidas.");
+        }
+      } catch (err) {
+        showAuthError("Error de conexión: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Ingresar";
+      }
+    });
+
+    document.getElementById("clientOrderForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("btnSubmitOrder");
+      const box = document.getElementById("orderConfirmation");
+      btn.disabled = true;
+      btn.textContent = "Enviando...";
+      box.classList.add("hidden");
+
+      const paymentType = document.getElementById("cPayment").value;
+      const paymentReference = paymentType === "Pago Móvil"
+        ? document.getElementById("cReference").value.trim()
+        : "N/A";
+
+      const orderId = "BR-" + Date.now().toString().slice(-6);
+      const order = {
+        id: orderId,
+        createdAt: new Date().toISOString(),
+        clientName: document.getElementById("cName").value.trim(),
+        clientPhone: document.getElementById("cPhone").value.trim(),
+        serviceType: document.getElementById("cType").value,
+        origin: document.getElementById("cOrigin").value.trim(),
+        destination: document.getElementById("cDestination").value.trim(),
+        netAmount: 0,
+        paymentType: paymentType,
+        paymentReference: paymentReference,
+        status: "Disponible",
+        driverName: "",
+        driverPhone: "",
+        notes: "Portal Clientes | Pago: " + paymentType + " | Ref: " + paymentReference
+      };
+
+      try {
+        await fetch(CLOUD_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "addOrder", order: order })
+        });
+
+        document.getElementById("cOrigin").value = "";
+        document.getElementById("cDestination").value = "";
+        document.getElementById("cPayment").value = "Corporativo";
+        handlePaymentChange();
+
+        box.innerHTML = `<strong>¡Solicitud enviada!</strong> Código <strong>${orderId}</strong>. Ya está en cola para asignación por un operador.`;
+        box.classList.remove("hidden");
+      } catch (err) {
+        alert("No se pudo enviar la solicitud: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Enviar Solicitud";
+      }
+    });
+  </script>
+</body>
+</html>
